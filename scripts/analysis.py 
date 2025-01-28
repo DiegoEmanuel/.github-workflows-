@@ -1,0 +1,23 @@
+import os
+from datetime import datetime
+from git import Repo
+
+def analyze_development():
+    repo = Repo('.')
+    commits = list(repo.iter_commits('main', max_count=100))  # Ajuste para sua branch
+    
+    # Filtrar commits do dia
+    today = datetime.now().date()
+    today_commits = [c for c in commits if c.committed_datetime.date() == today]
+    
+    # Gerar análise
+    analysis = f"## 📅 Análise Diária ({today})\n"
+    analysis += f"- **Commits hoje:** {len(today_commits)}\n"
+    analysis += f"- **Arquivos modificados:** {sum(len(c.stats.files) for c in today_commits)}\n"
+    
+    # Atualizar README.md
+    with open('README.md', 'a') as f:
+        f.write('\n\n' + analysis)
+
+if __name__ == '__main__':
+    analyze_development()
